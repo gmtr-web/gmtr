@@ -6,7 +6,7 @@ async function load() {
 }
 load().then();
 
-function getNumber() {
+function getInput() {
     return document.getElementById("number").value;
 }
 
@@ -20,27 +20,37 @@ async function getKnownWords(number) {
     return words;
 }
 
-function clearResults() {
+async function getSimilarWords(input) {
+    let words = [];
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].t.toLowerCase().indexOf(input.toLowerCase()) >= 0)
+            words.push(data[i]);
+    }
+
+    return words;
+}
+
+function clear() {
     let results = document.getElementById("results");
     while (results.childNodes.length > 0) {
         results.removeChild(results.childNodes[0]);
     }
 }
 
-function displayKnownWords(words) {
-    let table = document.createElement("TABLE");
+function printWords(words) {
+    printText("Words:", "left");
     for (let i = 0; i < words.length; i++) {
-        let row = document.createElement("TR");
-        let word = document.createElement("TD");
-        let trans = document.createElement("TD");
-        word.appendChild(document.createTextNode(words[i].w));
-        trans.appendChild(document.createTextNode(words[i].t));
-        row.appendChild(word);
-        row.appendChild(trans);
-        table.appendChild(row);
+        let div = document.createElement("DIV");
+        div.appendChild(document.createTextNode("(" + words[i].v + ") " + words[i].w + "\n" + words[i].t + "\n\n"));
+        div.style.textAlign = "right";
+        document.getElementById("results").appendChild(div);
     }
 
     document.getElementById("results").appendChild(table);
+}
+
+function printPhrase(phrase) {
+
 }
 
 async function getRandomPhrase(number) {
@@ -69,7 +79,7 @@ async function getRandomPhrase(number) {
     return phraseWords;
 }
 
-function showResultText(text, align) {
+function printText(text, align) {
     let div = document.createElement("DIV");
     div.style.textAlign = align;
     div.appendChild(
@@ -81,7 +91,7 @@ function showResultText(text, align) {
     );
 }
 
-function showResultLink(text, href, align) {
+function printLink(text, href, align) {
     let div = document.createElement("DIV");
     div.style.textAlign = align;
 
@@ -99,7 +109,7 @@ function showResultLink(text, href, align) {
 let dbg = null;
 
 function displayRandomPhrase(words) {
-    showResultText("Words:\n\n", "left");
+    printText("Words:\n\n", "left");
 
     let wordStrings = [];
     let wordsDiv = document.createElement("DIV");
@@ -121,42 +131,50 @@ function displayRandomPhrase(words) {
     phrases.push(wordStrings.join(" ").split("").reverse().join(""));
     dbg = phrases;
 
-    showResultText("\n");
-    showResultText("Phrase 1:\n", "left");
-    showResultLink(phrases[0] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[0], "right");
-    showResultText("Phrase 2:\n", "left");
-    showResultLink(phrases[1] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[1], "right");
-    showResultText("Phrase 3:\n", "left");
-    showResultLink(phrases[2] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[2], "right");
-    showResultText("Phrase 4:\n", "left");
-    showResultLink(phrases[3] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[3], "right");
+    printText("\n");
+    printText("Phrase 1:\n", "left");
+    printLink(phrases[0] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[0], "right");
+    printText("Phrase 2:\n", "left");
+    printLink(phrases[1] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[1], "right");
+    printText("Phrase 3:\n", "left");
+    printLink(phrases[2] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[2], "right");
+    printText("Phrase 4:\n", "left");
+    printLink(phrases[3] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[3], "right");
 }
 
 async function onListWords() {
-    clearResults();
-    showResultText("Thinking...");
-    let words = await getKnownWords(getNumber());
-    clearResults();
-    displayKnownWords(words);
+    clear();
+    printText("Thinking...");
+    let words = await getKnownWords(getInput());
+    clear();
+    printWords(words);
+}
+
+async function onSearchWords() {
+    clear();
+    printText("Thinking...");
+    let words = await getSimilarWords(getInput());
+    clear();
+    printWords(words);
 }
 
 async function onRandomWord() {
-    clearResults();
-    showResultText("Thinking...");
-    let words = await getKnownWords(getNumber());
-    clearResults();
-    displayKnownWords([words[Math.floor(Math.random() * words.length)]]);
+    clear();
+    printText("Thinking...");
+    let words = await getKnownWords(getInput());
+    clear();
+    printWords([words[Math.floor(Math.random() * words.length)]]);
 }
 
 async function onRandomPhrase() {
-    clearResults();
-    if (getNumber() < 2) {
-        showResultText("Please enter a number of 2 or higher.");
+    clear();
+    if (getInput() < 2) {
+        printText("Please enter a number of 2 or higher.");
         return;
     }
 
-    showResultText("Thinking...");
-    let words = await getRandomPhrase(getNumber());
-    clearResults();
+    printText("Thinking...");
+    let words = await getRandomPhrase(getInput());
+    clear();
     displayRandomPhrase(words);
 }
