@@ -1,3 +1,4 @@
+let dbg = null;
 let data = null;
 async function load() {
     const response = await fetch("assets/dict.json");
@@ -23,34 +24,12 @@ async function getKnownWords(number) {
 async function getSimilarWords(input) {
     let words = [];
     for (let i = 0; i < data.length; i++) {
-        if (data[i].t.toLowerCase().indexOf(input.toLowerCase()) >= 0)
+        if (data[i].t.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            || data[i].w.indexOf(input) >= 0)
             words.push(data[i]);
     }
 
     return words;
-}
-
-function clear() {
-    let results = document.getElementById("results");
-    while (results.childNodes.length > 0) {
-        results.removeChild(results.childNodes[0]);
-    }
-}
-
-function printWords(words) {
-    printText("Words:", "left");
-    for (let i = 0; i < words.length; i++) {
-        let div = document.createElement("DIV");
-        div.appendChild(document.createTextNode("(" + words[i].v + ") " + words[i].w + "\n" + words[i].t + "\n\n"));
-        div.style.textAlign = "right";
-        document.getElementById("results").appendChild(div);
-    }
-
-    document.getElementById("results").appendChild(table);
-}
-
-function printPhrase(phrase) {
-
 }
 
 async function getRandomPhrase(number) {
@@ -77,6 +56,13 @@ async function getRandomPhrase(number) {
     }
 
     return phraseWords;
+}
+
+function clear() {
+    let results = document.getElementById("results");
+    while (results.childNodes.length > 0) {
+        results.removeChild(results.childNodes[0]);
+    }
 }
 
 function printText(text, align) {
@@ -106,32 +92,29 @@ function printLink(text, href, align) {
     document.getElementById("results").appendChild(div);
 }
 
-let dbg = null;
-
-function displayRandomPhrase(words) {
-    printText("Words:\n\n", "left");
-
-    let wordStrings = [];
-    let wordsDiv = document.createElement("DIV");
-
+function printWords(words) {
+    printText("Words:", "left");
     for (let i = 0; i < words.length; i++) {
-        wordStrings.push(words[i].w);
-        let div = document.createElement("DIV")
+        let div = document.createElement("DIV");
         div.appendChild(document.createTextNode("(" + words[i].v + ") " + words[i].w + "\n" + words[i].t + "\n\n"));
         div.style.textAlign = "right";
         document.getElementById("results").appendChild(div);
     }
+}
+
+function printPhrases(words) {
+    let wordStrings = [];
+    for (let i = 0; i < words.length; i++)
+        wordStrings.push(words[i].w);
 
     let phrases = [];
     phrases.push(wordStrings.join(" "));
     phrases.push(wordStrings.join(" ").split("").reverse().join(""));
-
     wordStrings.reverse();
     phrases.push(wordStrings.join(" "));
     phrases.push(wordStrings.join(" ").split("").reverse().join(""));
     dbg = phrases;
 
-    printText("\n");
     printText("Phrase 1:\n", "left");
     printLink(phrases[0] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[0], "right");
     printText("Phrase 2:\n", "left");
@@ -176,5 +159,5 @@ async function onRandomPhrase() {
     printText("Thinking...");
     let words = await getRandomPhrase(getInput());
     clear();
-    displayRandomPhrase(words);
+    printPhrases(words);
 }
