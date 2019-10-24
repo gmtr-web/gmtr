@@ -20,10 +20,10 @@ async function getKnownWords(number) {
     return words;
 }
 
-function clearChildren() {
+function clearResults() {
     let results = document.getElementById("results");
-    for (let i = 0; i < results.children.length; i++) {
-        results.removeChild(results.children[i]);
+    while (results.childNodes.length > 0) {
+        results.removeChild(results.childNodes[0]);
     }
 }
 
@@ -40,7 +40,6 @@ function displayKnownWords(words) {
         table.appendChild(row);
     }
 
-    clearChildren();
     document.getElementById("results").appendChild(table);
 }
 
@@ -50,11 +49,19 @@ async function getRandomPhrase(number) {
     let value = 0;
 
     while (value < number) {
-        let word = allWords[Math.floor(Math.random() * allWords.length)];
-        let wordNumber = word.v;
-        if (value + wordNumber > number)
-            continue;
+        let availableWords = [];
+        for (let i = 0; i < allWords.length; i++) {
+            if (allWords[i].v <= number - value)
+                availableWords.push(allWords[i]);
+        }
 
+        if (availableWords.length == 0) { // start over
+            phraseWords = [];
+            value = 0;
+            continue;
+        }
+
+        let word = availableWords[Math.floor(Math.random() * availableWords.length)];
         phraseWords.push(word);
         value += word.v;
     }
@@ -62,31 +69,94 @@ async function getRandomPhrase(number) {
     return phraseWords;
 }
 
-function displayRandomPhrase(words) {
-    clearChildren();
+function showResultText(text, align) {
+    let div = document.createElement("DIV");
+    div.style.textAlign = align;
+    div.appendChild(
+        document.createTextNode(text)
+    );
 
     document.getElementById("results").appendChild(
-
+        div
     );
-    let wordsDiv = document.createElement("DIV").append;
+}
+
+function showResultLink(text, href, align) {
+    let div = document.createElement("DIV");
+    div.style.textAlign = align;
+
+    let link = document.createElement("A");
+    link.href = href;
+    link.setAttribute("target", "_blank");
+    link.appendChild(
+        document.createTextNode(text)
+    );
+
+    div.appendChild(link);
+    document.getElementById("results").appendChild(div);
+}
+
+let dbg = null;
+
+function displayRandomPhrase(words) {
+    showResultText("Words:\n\n", "left");
+
+    let wordStrings = [];
+    let wordsDiv = document.createElement("DIV");
 
     for (let i = 0; i < words.length; i++) {
-        let div = document.createElement("DIV");
-        div.appendChild(document.createTextNode(words[i].v + "\n"));
-        div.appendChild(document.createTextNode(words[i].w + "\n"));
-        div.appendChild(document.createTextNode(words[i].t + "\n"));
+        wordStrings.push(words[i].w);
+        let div = document.createElement("DIV")
+        div.appendChild(document.createTextNode("(" + words[i].v + ") " + words[i].w + "\n" + words[i].t + "\n\n"));
+        div.style.textAlign = "right";
         document.getElementById("results").appendChild(div);
     }
+
+    let phrases = [];
+    phrases.push(wordStrings.join(" "));
+    phrases.push(wordStrings.join(" ").split("").reverse().join(""));
+
+    wordStrings.reverse();
+    phrases.push(wordStrings.join(" "));
+    phrases.push(wordStrings.join(" ").split("").reverse().join(""));
+    dbg = phrases;
+
+    showResultText("\n");
+    showResultText("Phrase 1:\n", "left");
+    showResultLink(phrases[0] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[0], "right");
+    showResultText("Phrase 2:\n", "left");
+    showResultLink(phrases[1] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[1], "right");
+    showResultText("Phrase 3:\n", "left");
+    showResultLink(phrases[2] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[2], "right");
+    showResultText("Phrase 4:\n", "left");
+    showResultLink(phrases[3] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[3], "right");
 }
 
 async function onListWords() {
+    clearResults();
+    showResultText("Thinking...");
     let words = await getKnownWords(getNumber());
+    clearResults();
     displayKnownWords(words);
 }
 
 async function onRandomWord() {
+    clearResults();
+    showResultText("Thinking...");
     let words = await getKnownWords(getNumber());
+    clearResults();
     displayKnownWords([words[Math.floor(Math.random() * words.length)]]);
 }
 
-a
+async function onRandomPhrase() {
+    clearResults();
+    if (getNumber() < 2) {
+        showResultText("Please enter a number of 2 or higher.");
+        return;
+    }
+
+    showResultText("Thinking...");
+    let words = await getRandomPhrase(getNumber());
+    clearResults();
+    displayRandomPhrase(words);
+}
