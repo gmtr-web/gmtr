@@ -8,7 +8,7 @@ async function load() {
 load().then();
 
 function getInput() {
-    return document.getElementById("number").value;
+    return register;
 }
 
 async function getKnownWords(number) {
@@ -58,11 +58,10 @@ async function getRandomPhrase(number) {
     return phraseWords;
 }
 
-function clear() {
-    let results = document.getElementById("results");
-    while (results.childNodes.length > 0) {
-        results.removeChild(results.childNodes[0]);
-    }
+function clear(id) {
+    let element = document.getElementById(id);
+    while (element != null && element.firstChild)
+        element.removeChild(element.firstChild);
 }
 
 function printText(text, align) {
@@ -91,6 +90,20 @@ function printLink(text, href, align) {
     div.appendChild(link);
     document.getElementById("results").appendChild(div);
 }
+
+function printOption(text, option, align) {
+    let div = document.createElement("DIV");
+    div.style.textAlign = align;
+
+    let a = document.createElement("A");
+    a.appendChild(document.createTextNode(text));
+    a.className = "option";
+    a.onclick = option;
+    div.appendChild(a);
+    document.getElementById("options").appendChild(div);
+}
+
+//printOption("list words", onListWords, "right");
 
 function printWords(words) {
     printText("Words:", "left");
@@ -125,32 +138,74 @@ function printPhrases(words) {
     printLink(phrases[3] + "\n\n", "https://translate.google.com/#iw|en|" + phrases[3], "right");
 }
 
+let registerStart = new Date();
+let register = "";
+let registerBlink = setInterval(printRegister, 1000);
+function printRegister() {
+    clear("register");
+    let dateDiff = (new Date()).getUTCSeconds() - (registerStart.getUTCSeconds());
+    let dateMod = dateDiff % 2;
+    console.log("dD " + dateDiff);
+    console.log("dM " + dateMod);
+    console.log("dS " + registerStart.getUTCSeconds());
+    document.getElementById("register").appendChild(
+        document.createTextNode(
+            ">" + register + (dateMod == 0 ? "▓" : "")
+        )
+    );
+}
+
+function updateRegister() {
+    clearInterval(registerBlink);
+    registerBlink = setInterval(printRegister, 1000);
+    registerStart = new Date();
+    printRegister();
+}
+
+function updateOptions() {
+    clear("options");
+    document.getElementById("options").appendChild(document.createTextNode("\n"));
+    if (register == "") {
+    }
+    else if (!isNaN(parseInt(register))) {
+        // show number options
+        printOption("List Known Words <", onListWords, "right");
+        printOption("Show a Random Word <", onRandomWord, "right");
+        printOption("Build a Random Phrase <", onRandomPhrase, "right");
+    }
+    else {
+        // show word options
+        printOption("Search for Matching Words <", onSearchWords, "right");
+    }
+    document.getElementById("options").appendChild(document.createTextNode("\n"));
+}
+
 async function onListWords() {
-    clear();
+    clear("results");
     printText("Thinking...");
     let words = await getKnownWords(getInput());
-    clear();
+    clear("results");
     printWords(words);
 }
 
 async function onSearchWords() {
-    clear();
+    clear("results");
     printText("Thinking...");
     let words = await getSimilarWords(getInput());
-    clear();
+    clear("results");
     printWords(words);
 }
 
 async function onRandomWord() {
-    clear();
+    clear("results");
     printText("Thinking...");
     let words = await getKnownWords(getInput());
-    clear();
+    clear("results");
     printWords([words[Math.floor(Math.random() * words.length)]]);
 }
 
 async function onRandomPhrase() {
-    clear();
+    clear("results");
     if (getInput() < 2) {
         printText("Please enter a number of 2 or higher.");
         return;
@@ -158,6 +213,28 @@ async function onRandomPhrase() {
 
     printText("Thinking...");
     let words = await getRandomPhrase(getInput());
-    clear();
+    clear("results");
+    printWords(words);
     printPhrases(words);
+}
+
+window.onkeydown = function(event) {
+    if (event.key == "Backspace")
+        register = register.substr(0, register.length - 1);
+    else if (/^[a-zA-Z0-9]$/.test(event.key))
+        register += event.key;
+    else
+        return;
+
+    updateRegister();
+    updateOptions();
+    console.log(event.key);
+}
+
+window.onload = function() {
+    document.getElementById("register").onclick = function() {
+        document.getElementById("hiddenText").focus();
+        console.log("clicked register");
+    };
+    document.getElementById("hiddenText").focus();
 }

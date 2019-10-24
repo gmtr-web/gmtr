@@ -17,6 +17,18 @@ body {
     text-align: left;
 }
 
+.option {
+    color: darkturquoise;
+}
+
+.option:hover {
+    color: aqua;
+}
+
+.option:active {
+    color: chartreuse;
+}
+
 p {
     text-align: center;
     white-space: pre;
@@ -33,4 +45,13 @@ div {
 
 #results table {
     width: 100%;
+}
+
+#register {
+    text-align: left;
+}
+
+#hiddenText {
+    position: absolute;
+    left: -1036px;
 }
