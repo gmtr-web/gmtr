@@ -1,11 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!-- Hello! -->
   <meta charset="UTF-8">
   <title>G.M.T.R.: Magic Toy Robot</title>
+  <link rel="stylesheet" type="text/css" href="assets/gmtr.css">
+  <script type="text/javascript" src="assets/gmtr.js"></script>
 </head>
 <body>
-  <h1>G.M.T.R.: Magic Toy Robot</h1>
-  <footer>!</footer>
+      <div class="header">
+  _____ __  __ _______ _____
+ / ____|  \/  |__   __|  __ \
+| |  __| \  / |  | |  | |__) |
+| | |_ | |\/| |  | |  |  _  /
+| |__| | |  | |  | |  | | \ \
+ \_____|_|  |_|  |_|  |_|  \_\
+
+   G.M.T.R.: Magic Toy Robot
+      </div>
+    <div>
+Type in any positive integer
+and select a Gematric operation
+to perform!
+    </div>
+    <div class="number">
+<input type="text" id="number" placeholder="123"/>
+<button onclick="onListWords();">List Known Words</button>
+<button onclick="onRandomWord();">Show Random Word</button>
+<button onclick="onRandomPhrase();">Generate Random Phrase</button>
+    </div>
+    <div id="results"></div>
+      <br />
+      <br />
+      <br />
 </body>
 </html>

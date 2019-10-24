@@ -1,0 +1,36 @@
+@font-face {
+    font-family: unifont;
+    src: url("unifont.ttf");
+}
+
+body {
+    font-family: unifont;
+    color: #EEEEEE;
+    background-color: #000000;
+    font-size: 36px;
+}
+
+.header {
+    margin: 0 auto;
+    width: 540px;
+    white-space: pre;
+    text-align: left;
+}
+
+p {
+    text-align: center;
+    white-space: pre;
+    margin: 0;
+}
+
+div {
+    #display: inline-block;
+    text-align: center;
+    white-space: pre;
+    width: 540px;
+    margin: 0 auto;
+}
+
+#results table {
+    width: 100%;
+}
