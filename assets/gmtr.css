@@ -30,7 +30,6 @@ body {
 }
 
 #hidden {
-    #display: none;
 }
 
 p {
@@ -40,7 +39,6 @@ p {
 }
 
 div {
-    #display: inline-block;
     text-align: center;
     white-space: pre;
     width: 540px;
@@ -53,6 +51,7 @@ div {
 
 #input {
     position: relative;
+    white-space: normal;
 }
 
 #register {
