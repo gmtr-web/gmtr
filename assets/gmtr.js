@@ -106,6 +106,12 @@ function printOption(text, option, align) {
 //printOption("list words", onListWords, "right");
 
 function printWords(words) {
+    if (words.length == 0) {
+        printText("Couldn't find any words \n" +
+            "with that number, sorry!");
+        return;
+    }
+
     printText("Words:", "left");
     for (let i = 0; i < words.length; i++) {
         let div = document.createElement("DIV");
@@ -164,13 +170,15 @@ function updateOptions() {
     document.getElementById("options").appendChild(document.createTextNode("\n"));
     if (register == "") {
     }
-    else if (!isNaN(parseInt(register))) {
+    else if (!isNaN(parseInt(register)) && !/^[a-zA-Z]$/.test(register)) {
         // show number options
-        printOption("List Known Words <", onListWords, "right");
-        printOption("Show a Random Word <", onRandomWord, "right");
+        if (register <= 2442) {
+            printOption("List Known Words <", onListWords, "right");
+            printOption("Show a Random Word <", onRandomWord, "right");
+        }
         printOption("Build a Random Phrase <", onRandomPhrase, "right");
     }
-    else {
+    else if (!/^[0-9]$/.test(register)) {
         // show word options
         printOption("Search for Matching Words <", onSearchWords, "right");
     }
@@ -204,7 +212,12 @@ async function onRandomWord() {
 async function onRandomPhrase() {
     clear("results");
     if (getInput() < 2) {
-        printText("Please enter a number of 2 or higher.");
+        printText("Please enter a number\nof 2 or higher.");
+        return;
+    }
+
+    if (getInput() > 99999) {
+        printText("Please enter a number\nless than 100,000");
         return;
     }
 
