@@ -145,9 +145,6 @@ function printRegister() {
     clear("register");
     let dateDiff = (new Date()).getUTCSeconds() - (registerStart.getUTCSeconds());
     let dateMod = dateDiff % 2;
-    console.log("dD " + dateDiff);
-    console.log("dM " + dateMod);
-    console.log("dS " + registerStart.getUTCSeconds());
     document.getElementById("register").appendChild(
         document.createTextNode(
             ">" + register + (dateMod == 0 ? "▓" : "")
@@ -228,13 +225,12 @@ window.onkeydown = function(event) {
 
     updateRegister();
     updateOptions();
-    console.log(event.key);
 }
 
 window.onload = function() {
-    document.getElementById("register").onclick = function() {
+    document.getElementById("register").addEventListener('touchend', function() {
         document.getElementById("hiddenText").focus();
         console.log("clicked register");
-    };
+    });
     document.getElementById("hiddenText").focus();
 }

@@ -30,7 +30,7 @@ body {
 }
 
 #hidden {
-    display: none;
+    #display: none;
 }
 
 p {
@@ -51,10 +51,25 @@ div {
     width: 100%;
 }
 
+#input {
+    position: relative;
+}
+
 #register {
     text-align: left;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 #hiddenText {
-    width: 0%;
+    opacity: 0;
+    font-size: 16px;
+    float: left;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 40px;
+    width: 540px;
+    z-index: 1;
 }
