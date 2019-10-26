@@ -1,11 +1,34 @@
 let dbg = null;
 let data = null;
-async function load() {
+let symbols = [];
+let colors = [
+    "red",
+    "orange",
+    "yellow",
+    "chartreuse",
+    "green",
+    "springgreen",
+    "cyan",
+    "azure",
+    "blue",
+    "violet",
+    "magenta",
+    "rose"
+];
+
+async function loadDictionary() {
     const response = await fetch("assets/dict.json");
     const json = await response.json();
     data = json;
 }
-load().then();
+
+async function loadSymbols() {
+    const response = await fetch("assets/symbols.txt");
+    const text = await response.text();
+    symbols = text.split("");
+}
+loadDictionary().then();
+loadSymbols();
 
 function getInput() {
     return register;
@@ -158,6 +181,37 @@ function printRegister() {
     );
 }
 
+async function updateSymbols() {
+    if (symbols.length == 0)
+        await loadSymbols();
+
+    clear("background");
+    let charWidth = document.getElementById("test").offsetWidth;
+    let charHeight = document.getElementById("test").offsetHeight;
+    let xSize = screen.width / charWidth;
+    let ySize = screen.height / charHeight;
+
+    for (let y = 0; y < ySize; y++) {
+        for (let x = 0; x < xSize; x++) {
+            let span = document.createElement("SPAN");
+            let rand = Math.floor(Math.random() * symbols.length);
+            let sym = symbols[rand];
+            span.class = "symbol";
+            span.style.color = colors[Math.floor(Math.random() * colors.length)];
+            span.appendChild(
+                document.createTextNode(sym)
+            );
+
+            document.getElementById("background").appendChild(span);
+        }
+        document.getElementById("background").appendChild(
+            document.createTextNode("\n")
+        );
+    }
+    console.log(xSize);
+    console.log(ySize);
+}
+
 function updateRegister() {
     clearInterval(registerBlink);
     registerBlink = setInterval(printRegister, 1000);
@@ -240,10 +294,10 @@ window.onkeydown = function(event) {
     updateOptions();
 }
 
-window.onload = function() {
+window.onload = async function() {
     document.getElementById("register").addEventListener('touchend', function() {
         document.getElementById("hiddenText").focus();
-        console.log("clicked register");
     });
     document.getElementById("hiddenText").focus();
+    await updateSymbols();
 }
