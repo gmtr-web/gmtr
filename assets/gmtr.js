@@ -182,14 +182,21 @@ function printRegister() {
 }
 
 async function updateSymbols() {
+    let windowWidth = window.innerWidth || document.documentElement.clientWidth ||
+        document.body.clientWidth;
+    let windowHeight = window.innerHeight|| document.documentElement.clientHeight||
+        document.body.clientHeight;
+
     if (symbols.length == 0)
         await loadSymbols();
 
     clear("background");
     let charWidth = document.getElementById("test").offsetWidth;
     let charHeight = document.getElementById("test").offsetHeight;
-    let xSize = screen.width / charWidth;
-    let ySize = screen.height / charHeight;
+    let xSize = windowWidth / charWidth;
+    let ySize = windowHeight / charHeight;
+    console.log("width: " + windowWidth);
+    console.log("height: " + windowHeight);
 
     for (let y = 0; y < ySize; y++) {
         for (let x = 0; x < xSize; x++) {
