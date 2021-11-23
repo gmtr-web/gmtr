@@ -277,8 +277,8 @@ async function onRandomPhrase() {
         return;
     }
 
-    if (getInput() > 99999) {
-        printText("Please enter a number\nless than 100,000");
+    if (getInput() > 999999) {
+        printText("Please enter a number\nless than 1,000,000");
         return;
     }
 
